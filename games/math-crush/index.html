@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Math Crush - RGB Gamer</title>
+<style>
+:root{
+  --cyan:#00f5ff; --pink:#ff00a8; --purple:#8a2be2; --blue:#4169ff;
+  --green:#00ff88; --yellow:#ffe600; --bg:#050014;
+}
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;user-select:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 20%,rgba(0,245,255,.16),transparent 25%),
+    radial-gradient(circle at 85% 80%,rgba(255,0,168,.18),transparent 28%),
+    linear-gradient(135deg,#02000a,#09001c 45%,#02000b);
+  color:white;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(0,245,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,0,168,.035) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:gridMove 12s linear infinite;
+}
+@keyframes gridMove{to{background-position:40px 40px}}
+.screen{display:none;width:100%;height:100%;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.screen.active{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+
+.panel{
+  width:min(1150px,96vw);max-height:94vh;overflow:auto;
+  padding:38px;border:1px solid rgba(0,245,255,.45);
+  border-radius:28px;
+  background:rgba(7,4,28,.88);
+  backdrop-filter:blur(18px);
+  box-shadow:0 0 35px rgba(0,245,255,.18),0 0 80px rgba(255,0,168,.12),inset 0 0 35px rgba(138,43,226,.08);
+}
+h1{
+  margin:0 0 10px;text-align:center;font-size:clamp(2.4rem,8vw,7rem);
+  font-weight:1000;letter-spacing:5px;
+  color:white;text-shadow:0 0 8px var(--cyan),0 0 22px var(--cyan),0 0 42px var(--pink);
+}
+.subtitle{text-align:center;color:#b9faff;font-size:clamp(1rem,2vw,1.35rem)}
+.rules{
+  max-width:760px;margin:28px auto;padding:22px 28px;
+  border-radius:20px;background:rgba(0,245,255,.055);
+  border:1px solid rgba(255,0,168,.5);
+  box-shadow:0 0 22px rgba(255,0,168,.12);
+}
+.rules h2{color:var(--yellow);text-shadow:0 0 12px var(--yellow)}
+.rules li{margin:11px 0;color:#e9e9ff;line-height:1.5}
+.btn{
+  display:block;margin:25px auto 0;padding:16px 48px;border:2px solid var(--cyan);
+  border-radius:999px;background:linear-gradient(90deg,rgba(0,245,255,.15),rgba(255,0,168,.18));
+  color:white;font-size:1.2rem;font-weight:900;letter-spacing:2px;cursor:pointer;
+  box-shadow:0 0 14px rgba(0,245,255,.55),inset 0 0 14px rgba(255,0,168,.15);
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 25px var(--cyan),0 0 45px rgba(255,0,168,.5)}
+.game{width:min(1300px,96vw);max-height:96vh;overflow:auto;padding:4px}
+.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.hudBox{
+  padding:10px 6px;text-align:center;border-radius:16px;border:1px solid rgba(0,245,255,.4);
+  background:rgba(5,0,25,.78);box-shadow:0 0 18px rgba(0,245,255,.12);font-size:clamp(.65rem,1.6vw,.9rem)
+}
+.hudBox span{display:block;color:var(--cyan);font-size:clamp(1.1rem,3vw,1.65rem);font-weight:1000;text-shadow:0 0 12px var(--cyan)}
+.target{
+  text-align:center;padding:14px;border-radius:22px;margin-bottom:16px;
+  border:2px solid var(--yellow);
+  background:radial-gradient(circle,rgba(255,230,0,.18),rgba(255,0,168,.06));
+  box-shadow:0 0 25px rgba(255,230,0,.3),inset 0 0 30px rgba(255,0,168,.08)
+}
+.target small{letter-spacing:4px;color:#fff4a0;font-weight:900;font-size:clamp(.6rem,1.6vw,.8rem)}
+.targetNum{font-size:clamp(2.4rem,7vw,6rem);font-weight:1000;color:white;text-shadow:0 0 12px var(--yellow),0 0 30px #ff8c00}
+
+.grid{
+  width:min(560px,86vw);max-width:96vmin;aspect-ratio:1;margin:0 auto 14px;padding:8px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+  border-radius:24px;background:rgba(0,0,0,.35);
+  border:1px solid rgba(0,245,255,.35);
+  box-shadow:0 0 25px rgba(138,43,226,.22),inset 0 0 25px rgba(0,245,255,.08)
+}
+.cell{
+  position:relative;display:flex;align-items:center;justify-content:center;min-width:0;
+  border-radius:16px;font-size:clamp(1rem,4.5vw,2.2rem);font-weight:1000;color:#ffffff;
+  cursor:pointer;border:2px solid rgba(255,255,255,.18);
+  transition:.15s;box-shadow:inset 0 0 12px rgba(255,255,255,.12),0 0 9px currentColor;text-shadow:0 2px 4px #000,0 0 6px #000;
+}
+.cell.locked{cursor:default;pointer-events:none}
+.cell:hover{transform:scale(1.06);z-index:2}
+.cell.selected{transform:scale(.92);border:4px solid white;box-shadow:0 0 12px white,0 0 30px currentColor}
+/* Todos los números en blanco para que se lean bien sobre cualquier color */
+.c1{background:#ff1744;color:#ffffff}.c2{background:#2979ff;color:#ffffff}.c3{background:#00e676;color:#ffffff}
+.c4{background:#ffea00;color:#ffffff}.c5{background:#d500f9;color:#ffffff}.c6{background:#ff00a8;color:#ffffff}
+.c7{background:#ff6d00;color:#ffffff}.c8{background:#00e5ff;color:#ffffff}.c9{background:#7c4dff;color:#ffffff}
+.cell::after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(255,255,255,.08);pointer-events:none}
+
+.ops{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.op{
+  flex:1;min-width:60px;max-width:180px;padding:13px;border-radius:15px;border:2px solid #6d5cff;
+  background:rgba(77,45,180,.2);color:white;font-size:clamp(1.2rem,4vw,1.7rem);font-weight:1000;cursor:pointer;
+  box-shadow:0 0 12px rgba(124,77,255,.25);transition:.15s
+}
+.op:hover,.op.selected{background:linear-gradient(135deg,#00b8ff,#d500f9);border-color:white;box-shadow:0 0 20px var(--cyan),0 0 30px var(--pink);transform:translateY(-3px)}
+.op.disabled{opacity:.35;cursor:not-allowed;pointer-events:none;box-shadow:none}
+.message{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  padding:18px 34px;border-radius:20px;background:rgba(4,0,20,.94);
+  border:2px solid var(--green);color:var(--green);font-size:clamp(1.3rem,5vw,2rem);font-weight:1000;
+  text-shadow:0 0 12px var(--green);box-shadow:0 0 35px var(--green);display:none;z-index:20;text-align:center;max-width:90vw
+}
+.message.bad{border-color:#ff3355;color:#ff3355;text-shadow:0 0 12px #ff3355;box-shadow:0 0 35px #ff3355}
+.shake{animation:shake .25s}
+@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+.pop{animation:pop .3s forwards}
+@keyframes pop{to{transform:scale(0);opacity:0}}
+@media(max-width:700px){
+ .panel{padding:20px}
+ .grid{width:min(92vw,420px);gap:5px;padding:6px}
+ .cell{border-radius:9px}
+ .hudBox{padding:8px 4px}
+ .ops{gap:6px}
+ .op{padding:11px;min-width:50px}
+}
+@media(max-height:680px){
+ .panel{padding:16px}
+ h1{font-size:clamp(1.8rem,7vw,4rem);margin-bottom:4px}
+ .rules{margin:12px auto;padding:14px 18px}
+ .rules li{margin:6px 0}
+ .target{padding:8px;margin-bottom:8px}
+ .hud{margin-bottom:8px}
+}
+</style>
+</head>
+<body>
+
+<div id="start" class="screen active">
+  <div class="panel">
+    <h1>MATH CRUSH</h1>
+    <p class="subtitle">⚡ AVENTURA MATEMÁTICA • RGB GAMER ⚡</p>
+    <div class="rules">
+      <h2>🎮 ¿CÓMO JUGAR?</h2>
+      <ul>
+        <li>Encuentra el <b>NÚMERO OBJETIVO</b> que aparece arriba.</li>
+        <li>Selecciona <b>dos números vecinos</b> del tablero (uno pegado al otro).</li>
+        <li>Luego elige la operación: <b>+, −, × o ÷</b>.</li>
+        <li>Si el resultado coincide con el objetivo, ganas <b>100 puntos</b>.</li>
+        <li>El orden en que los toques no importa: probamos ambas combinaciones.</li>
+        <li>Tienes <b>3 vidas</b> y <b>60 segundos</b> para conseguir la mayor puntuación.</li>
+      </ul>
+    </div>
+    <button class="btn" onclick="startGame()">▶ INICIAR PARTIDA</button>
+  </div>
+</div>
+
+<div id="game" class="screen">
+ <div class="game">
+  <div class="hud">
+   <div class="hudBox">🏆 PUNTOS<span id="score">0</span></div>
+   <div class="hudBox">❤️ VIDAS<span id="lives">❤️❤️❤️</span></div>
+   <div class="hudBox">⏱️ TIEMPO<span id="timer">60s</span></div>
+  </div>
+  <div class="target"><small>🎯 NÚMERO OBJETIVO</small><div class="targetNum" id="target">12</div></div>
+  <div id="grid" class="grid"></div>
+  <div class="ops">
+   <button class="op" data-op="+" onclick="selectOp('+')">+</button>
+   <button class="op" data-op="-" onclick="selectOp('-')">−</button>
+   <button class="op" data-op="*" onclick="selectOp('*')">×</button>
+   <button class="op" data-op="/" onclick="selectOp('/')">÷</button>
+  </div>
+ </div>
+</div>
+
+<div id="over" class="screen">
+ <div class="panel">
+  <h1>GAME OVER</h1>
+  <p class="subtitle">🔥 ¡Buen trabajo, matemático!</p>
+  <div class="target"><small>PUNTUACIÓN FINAL</small><div class="targetNum" id="finalScore">0</div></div>
+  <button class="btn" onclick="showStart()">↻ VOLVER A JUGAR</button>
+ </div>
+</div>
+
+<div id="msg" class="message">¡GENIAL! +100</div>
+
+<script>
+const rows=5,cols=5;
+let grid=[],score=0,lives=3,time=60,target=0,timer,locked=false;
+let first=null,second=null; // las dos celdas elegidas por el jugador
+
+function $(id){return document.getElementById(id)}
+function screen(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}
+
+function startGame(){
+ score=0;lives=3;time=60;first=null;second=null;locked=false;
+ $('score').textContent=score;$('timer').textContent='60s';updateLives();
+ screen('game');createGrid();newTarget();clearInterval(timer);timer=setInterval(tick,1000)
+}
+function showStart(){clearInterval(timer);screen('start')}
+function tick(){time--; $('timer').textContent=time+'s'; if(time<=0) endGame()}
+function updateLives(){$('lives').textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives)}
+
+function createGrid(){
+ grid=Array.from({length:rows},()=>Array.from({length:cols},()=>Math.floor(Math.random()*9)+1));
+ render()
+}
+function render(){
+ $('grid').innerHTML='';
+ grid.forEach((row,r)=>row.forEach((v,c)=>{
+  const e=document.createElement('div');e.className='cell c'+v;e.textContent=v;
+  e.onclick=()=>clickCell(r,c,e);$('grid').appendChild(e)
+ }))
+}
+
+// Aplica una operación de forma segura (evita división por cero / decimales raros)
+function apply(o,a,b){
+ if(o==='+')return a+b;
+ if(o==='-')return a-b;
+ if(o==='*')return a*b;
+ if(o==='/')return b!==0 ? a/b : null;
+ return null;
+}
+
+// Genera un objetivo garantizando que exista al menos una pareja de vecinos que lo resuelva
+function newTarget(){
+ let candidates=[];
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+  const dirs=[[1,0],[0,1]]; // solo revisamos hacia abajo y derecha para no duplicar pares
+  dirs.forEach(([dr,dc])=>{
+   const r2=r+dr,c2=c+dc;
+   if(r2<rows&&c2<cols){
+    const a=grid[r][c],b=grid[r2][c2];
+    const ops=['+','-','*','/'];
+    ops.forEach(o=>{
+     const res=apply(o,a,b);
+     if(res!==null && Number.isInteger(res)){
+      candidates.push(res);
+     }
+    });
+   }
+  });
+ }
+ if(candidates.length===0){ // por seguridad, no debería pasar nunca
+  target=grid[0][0]+grid[0][1];
+ }else{
+  target=candidates[Math.floor(Math.random()*candidates.length)];
+ }
+ $('target').textContent=target
+}
+
+function clickCell(r,c,e){
+ if(locked)return;
+
+ // Caso 1: no hay ningún número elegido todavía -> este es el primero
+ if(!first){
+  first={r,c,v:grid[r][c],e};
+  e.classList.add('selected');
+  return;
+ }
+
+ // Caso 2: ya había primero pero no segundo
+ if(!second){
+  if(first.r===r&&first.c===c)return; // no seleccionarse a sí mismo
+  const neighbor=Math.abs(first.r-r)+Math.abs(first.c-c)===1;
+  if(!neighbor){
+   // si tocan un número que no es vecino, reiniciamos y empezamos de nuevo con ese
+   first.e.classList.remove('selected');
+   first={r,c,v:grid[r][c],e};
+   e.classList.add('selected');
+   return;
+  }
+  second={r,c,v:grid[r][c],e};
+  e.classList.add('selected');
+  return;
+ }
+
+ // Caso 3: ya había 2 números elegidos -> este clic reinicia la selección
+ first.e.classList.remove('selected');
+ second.e.classList.remove('selected');
+ first={r,c,v:grid[r][c],e};
+ second=null;
+ e.classList.add('selected');
+}
+
+function selectOp(o){
+ if(locked||!first||!second)return; // hace falta tener 2 números elegidos
+
+ // Probamos las dos combinaciones posibles (primero-op-segundo y segundo-op-primero)
+ const res1=apply(o,first.v,second.v);
+ const res2=apply(o,second.v,first.v);
+ const match=(res1!==null && res1===target)||(res2!==null && res2===target);
+
+ if(match){
+  locked=true;
+  score+=100;$('score').textContent=score;showMessage(true);
+  first.e.classList.add('pop');second.e.classList.add('pop');
+  const fr=first.r,fc=first.c,sr=second.r,sc=second.c;
+  setTimeout(()=>{grid[fr][fc]=0;grid[sr][sc]=0;collapse();reset();newTarget();locked=false},300)
+ }else{
+  fail()
+ }
+}
+
+function fail(){
+ lives--;updateLives();showMessage(false);$('grid').classList.add('shake');setTimeout(()=>$('grid').classList.remove('shake'),250);reset();
+ if(lives<=0)endGame()
+}
+function reset(){
+ if(first)first.e.classList.remove('selected');
+ if(second)second.e.classList.remove('selected');
+ first=null;second=null;
+}
+function collapse(){
+ for(let c=0;c<cols;c++){
+  let vals=[];for(let r=rows-1;r>=0;r--)if(grid[r][c]!==0)vals.push(grid[r][c]);
+  while(vals.length<rows)vals.push(Math.floor(Math.random()*9)+1);
+  for(let r=rows-1;r>=0;r--)grid[r][c]=vals[rows-1-r]
+ }render()
+}
+function showMessage(ok){
+ let m=$('msg');
+ m.classList.toggle('bad',!ok);
+ m.textContent=ok?'¡GENIAL! +100':'❌ INCORRECTO';
+ m.style.display='block';
+ setTimeout(()=>m.style.display='none',550)
+}
+function endGame(){clearInterval(timer);$('finalScore').textContent=score;screen('over')}
+</script>
+</body>
+</html>

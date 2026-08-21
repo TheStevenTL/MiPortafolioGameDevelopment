@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECHOES - Experiencia Interactiva Extendida</title>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: #131b2e;
+      --card-bg: #1c273e;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --danger-red: #f43f5e;
+      --warning-amber: #fbbf24;
+      --success-green: #34d399;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --glow-blue: rgba(56, 189, 248, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(192, 132, 252, 0.12) 0px, transparent 50%);
+    }
+
+    /* INTERFAZ ESPACIOSA EN 3 COLUMNAS */
+    .game-viewport {
+      width: 100%;
+      max-width: 1280px;
+      height: 740px;
+      background-color: var(--panel-bg);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px var(--glow-blue);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* BARRA SUPERIOR Y MÉTRICAS DE ESTADO */
+    .game-header {
+      padding: 16px 28px;
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-bars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 130px);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bar-bg {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* PANTALLAS */
+    .screen {
+      position: absolute;
+      top: 70px; left: 0; right: 0; bottom: 0;
+      padding: 24px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.98);
+    }
+
+    /* INICIO Y MENÚS */
+    .hero-graphic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(192, 132, 252, 0.2));
+      border: 2px solid var(--accent-blue);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 0 50px var(--glow-blue);
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid var(--accent-blue);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-blue), #0284c7);
+      color: #090d16;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 25px var(--glow-blue);
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px var(--glow-blue);
+    }
+
+    /* LAYOUT DE TRES COLUMNAS (IMAGEN + JUEGO + PANEL NOTICIAS) */
+    .main-game-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 290px;
+      gap: 18px;
+      width: 100%;
+      height: 100%;
+      align-items: stretch;
+    }
+
+    /* 1. PANEL IZQUIERDO: ILUSTRACIÓN DE ETAPA */
+    .stage-image-panel {
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stage-image-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f172a;
+    }
+
+    .stage-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .stage-image-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      background: linear-gradient(to top, rgba(9, 13, 22, 0.95), transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stage-image-caption {
+      font-size: 0.7rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stage-image-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* 2. PANEL CENTRAL: ESCENARIO Y DECISIONES */
+    .center-game-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      gap: 12px;
+    }
+
+    .visual-stage {
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      flex: 1;
+    }
+
+    .chat-bubble-mock {
+      width: 95%;
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 4px solid var(--accent-blue);
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      font-size: 0.82rem;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .avatar-vector {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #334155, #1e293b);
+      border: 3px solid var(--accent-blue);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .avatar-indicator {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--success-green);
+      border: 3px solid var(--card-bg);
+    }
+
+    .decision-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .story-meta {
+      font-size: 0.72rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+
+    .story-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .story-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .choice-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: var(--text-primary);
+      text-align: left;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .choice-btn:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--accent-blue);
+      transform: translateX(4px);
+    }
+
+    .choice-tag {
+      font-size: 0.65rem;
+      padding: 3px 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+
+    /* 3. PANEL DERECHO: NOTICIAS (ESTILO PLAGUE INC.) */
+    .news-panel {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 20px;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: inset 0 0 15px rgba(244, 63, 94, 0.05);
+    }
+
+    .news-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .news-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--danger-red);
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .news-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--danger-red);
+      text-transform: uppercase;
+    }
+
+    .news-feed {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+      margin-bottom: 10px;
+    }
+
+    .news-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-blue);
+      padding: 8px 10px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.72rem;
+      line-height: 1.35;
+      animation: fadeInNews 0.4s ease-out;
+    }
+
+    .news-item.alert {
+      border-left-color: var(--danger-red);
+      background: rgba(244, 63, 94, 0.05);
+    }
+
+    .news-item.good {
+      border-left-color: var(--success-green);
+      background: rgba(52, 211, 153, 0.05);
+    }
+
+    @keyframes fadeInNews {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-breakdown {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.68rem;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-secondary);
+    }
+
+    .stat-row strong {
+      color: var(--text-primary);
+    }
+
+    /* ESTILOS PARA LA PANTALLA FINAL E IMAGEN DE RESULTADO */
+    .ending-card-graphic {
+      width: 100%;
+      max-width: 320px;
+      height: 180px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 2px solid var(--accent-blue);
+      box-shadow: 0 0 30px var(--glow-blue);
+      margin-bottom: 16px;
+      background: #0f172a;
+    }
+
+    .ending-card-graphic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* EFECTOS DE ANIMACIÓN EN DECISIONES */
+    .flash-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 30;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-viewport">
+
+  <!-- ENCABEZADO CON INDICADORES -->
+  <header class="game-header">
+    <div class="brand-title">ECHOES</div>
+    
+    <div class="status-bars-grid" id="status-panel">
+      <div class="stat-card">
+        <div class="stat-label"><span>Popularidad</span><span id="val-pop">50%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="bar-pop" style="width: 50%; background: var(--warning-amber);"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span>Tu Emoción</span><span id="val-emo">50%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="bar-emo" style="width: 50%; background: var(--accent-blue);"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span>Salud de Alex</span><span id="val-vic">50%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="bar-vic" style="width: 50%; background: var(--danger-red);"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span>Moderación</span><span id="val-mod">50%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="bar-mod" style="width: 50%; background: var(--accent-purple);"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flash-overlay" id="flash-effect"></div>
+
+  <!-- PANTALLA 1: BIENVENIDA -->
+  <section class="screen" id="screen-welcome">
+    <div class="hero-graphic">
+      <div class="pulse-ring"></div>
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <h1 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 10px;">ECHOES: EL PRECIO DE UN CLIC</h1>
+    <p style="color: var(--text-secondary); max-width: 500px; text-align: center; font-size: 0.95rem; margin-bottom: 30px;">
+      Una simulación narrativa interactiva sobre el impacto del ciberbullying y la responsabilidad en entornos digitales.
+    </p>
+    <button class="btn-action" onclick="switchScreen('screen-welcome', 'screen-game'); startGame();">INICIAR EXPERIENCIA</button>
+  </section>
+
+  <!-- PANTALLA 2: JUEGO PRINCIPAL -->
+  <section class="screen hidden" id="screen-game">
+    <div class="main-game-layout">
+      
+      <!-- 1. PANEL IZQUIERDO: IMAGEN ILUSTRATIVA DE LA ETAPA -->
+      <div class="stage-image-panel">
+        <div class="stage-image-container">
+          <img id="stage-img" class="stage-image" src="" alt="Ilustración de la etapa">
+          <div class="stage-image-overlay">
+            <span class="stage-image-caption" id="stage-img-caption">ESCENA ACTUAL</span>
+            <span class="stage-image-title" id="stage-img-title">Cargando...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PANEL CENTRAL: ESCENARIO VIRTUAL Y DECISIONES -->
+      <div class="center-game-panel">
+        <div class="visual-stage" id="visual-stage">
+          <div class="avatar-vector" id="avatar-container">
+            <span id="avatar-icon">👤</span>
+            <div class="avatar-indicator" id="avatar-status"></div>
+          </div>
+          <div class="chat-bubble-mock" id="bubble-1">
+            <strong id="bubble-sender" style="color: var(--accent-blue);">Notificación</strong>
+            <p id="bubble-preview" style="color: var(--text-secondary); margin-top: 4px;">Sincronizando estado...</p>
+          </div>
+        </div>
+
+        <div class="decision-container">
+          <div>
+            <div class="story-meta" id="node-chapter">CAPÍTULO I</div>
+            <h2 class="story-title" id="node-title">Título del Evento</h2>
+            <p class="story-text" id="node-desc">Cargando situación narrativa...</p>
+          </div>
+
+          <div class="choices-grid">
+            <button class="choice-btn" id="btn-option-a" onclick="handleDecision('left')">
+              <span id="label-opt-a">Opción A</span>
+              <span class="choice-tag" id="tag-opt-a">Acción A</span>
+            </button>
+            <button class="choice-btn" id="btn-option-b" onclick="handleDecision('right')">
+              <span id="label-opt-b">Opción B</span>
+              <span class="choice-tag" id="tag-opt-b">Acción B</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. PANEL DERECHO: NOTICIAS E IMPACTO ESTADÍSTICO (PLAGUE INC.) -->
+      <div class="news-panel">
+        <div>
+          <div class="news-header">
+            <div class="news-live-dot"></div>
+            <div class="news-title">IMPACTO EN LA COMUNIDAD</div>
+          </div>
+          <div class="news-feed" id="news-feed-container">
+            <div class="news-item">Red digital activa. Monitoreando entorno escolar...</div>
+          </div>
+        </div>
+
+        <div class="stats-breakdown">
+          <div class="stat-row">
+            <span>Propagación del chisme:</span>
+            <strong id="stat-viral">10%</strong>
+          </div>
+          <div class="stat-row">
+            <span>Ansiedad de la víctima:</span>
+            <strong id="stat-anxiety" style="color: var(--warning-amber);">Baja</strong>
+          </div>
+          <div class="stat-row">
+            <span>Tensión escolar:</span>
+            <strong id="stat-tension">Normal</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PANTALLA 3: CONCLUSIÓN / GAME OVER -->
+  <section class="screen hidden" id="screen-end">
+    <!-- IMAGEN DINÁMICA DEL FINAL -->
+    <div class="ending-card-graphic">
+      <img id="end-image" src="" alt="Resultado Final">
+    </div>
+
+    <h2 id="end-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px;">FIN DE LA EXPERIENCIA</h2>
+    <p id="end-desc" style="color: var(--text-secondary); max-width: 520px; text-align: center; font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5;"></p>
+    <button class="btn-action" onclick="switchScreen('screen-end', 'screen-welcome');">REINICIAR HISTORIA</button>
+  </section>
+
+</div>
+
+<script>
+  // ESTADO GLOBAL DEL JUEGO
+  let stats = { pop: 50, emo: 50, vic: 50, mod: 50 };
+  let currentStep = 0;
+  let storyQueue = [];
+
+  // BASE DE DATOS DE EVENTOS Y ETAPAS
+  const extendedStoryTree = {
+    "node_1": {
+      chapter: "ACTO I: LA FOTO EDITADA",
+      title: "El inicio del virus",
+      desc: "Un compañero subió una fotografía comprometedora de Alex editada con IA al grupo masivo 'Los Implacables'. La gente pide reenviarlo.",
+      sender: "Grupo 'Los Implacables'",
+      preview: "¡Miren lo que subieron de Alex jajaja!",
+      avatar: "📸",
+      image: "imagenes/caso1.png",
+      imageTitle: "Captura Compartida",
+      left: { 
+        text: "Pedir que borren la imagen", tag: "FRENAR", pop: -10, emo: +10, vic: +25, mod: +15, nextSpecial: "good_1",
+        news: "ALERTA: Un alumno frena el reenvío del meme en el grupo. La difusión pierde fuerza.", newsType: "good",
+        viral: "15%", anxiety: "Baja", tension: "Baja"
+      },
+      right: { 
+        text: "Reenviar con un sticker burlón", tag: "VIRALIZAR", pop: +20, emo: -15, vic: -30, mod: -20, nextSpecial: "bad_1",
+        news: "VIRAL: El meme de Alex sobrepasa los 100 reenvíos en menos de 10 minutos.", newsType: "alert",
+        viral: "65%", anxiety: "Alta", tension: "Elevada"
+      }
+    },
+    "good_1": {
+      chapter: "EVENTO ESPECIAL: RESISTENCIA",
+      title: "Respaldo Inesperado",
+      desc: "Al oponerte, dos estudiantes te escriben por privado apoyándote: 'Nadie se atrevía a decir nada'. ¿Organizan una denuncia formal?",
+      sender: "Mensaje Privado - Valeria",
+      preview: "Gracias por hablar en el grupo...",
+      avatar: "🛡️",
+      image: "imagenes/caso2.png",
+      imageTitle: "Unión Estudiantil",
+      left: { 
+        text: "Unirse y denunciar la cuenta", tag: "ORGANIZAR", pop: +5, emo: +15, vic: +20, mod: +20,
+        news: "REPORTE: Grupo de estudiantes abre canal anónimo para reportar acoso escolar.", newsType: "good",
+        viral: "10%", anxiety: "Baja", tension: "Baja"
+      },
+      right: { 
+        text: "Dejarlo así, ya cumpliste", tag: "PAUSA", pop: 0, emo: -5, vic: -5, mod: 0,
+        news: "CARTA: El conflicto parece haberse estancado momentáneamente.", newsType: "info",
+        viral: "12%", anxiety: "Moderada", tension: "Estable"
+      }
+    },
+    "bad_1": {
+      chapter: "EVENTO ESPECIAL: IMPACTO DIRECTO",
+      title: "Notificación de Notificación",
+      desc: "Tu reenvío hizo que la foto llegara a más de 300 personas. Alex te envía un mensaje: 'Pensé que eras mi amigo'.",
+      sender: "Mensaje Directo - Alex",
+      preview: "¿Por qué lo reenviaste tú también?",
+      avatar: "⚠️",
+      image: "imagenes/caso3.png",
+      imageTitle: "Notificación Dolorosa",
+      left: { 
+        text: "Pedir disculpas y borrarlo", tag: "DISCULPA", pop: -15, emo: +10, vic: +10, mod: +10,
+        news: "ALERTA: Integrante del chat elimina el contenido viralizado y pide disculpas públicas.", newsType: "good",
+        viral: "50%", anxiety: "Alta", tension: "Elevada"
+      },
+      right: { 
+        text: "Bloquear a Alex y no responder", tag: "EVADIR", pop: +10, emo: -25, vic: -25, mod: -15,
+        news: "URGENTE: La víctima bloquea interacciones tras aislamiento social agudo.", newsType: "alert",
+        viral: "80%", anxiety: "Crítica", tension: "Muy Alta"
+      }
+    },
+    "node_2": {
+      chapter: "ACTO II: LA ESCALADA DIGITAL",
+      title: "Perfil Anónimo",
+      desc: "Crearon la cuenta @Alex_Fakes en Instagram para subir capturas privadas. Se está convirtiendo en el tema principal del colegio.",
+      sender: "Alerta de Instagram",
+      preview: "Nuevo perfil en tendencia...",
+      avatar: "👤",
+      image: "imagenes/caso4.png",
+      imageTitle: "Cuenta Falsa en Redes",
+      left: { 
+        text: "Reportar masivamente la cuenta", tag: "REPORTAR", pop: -5, emo: +10, vic: +20, mod: +20,
+        news: "SEGURIDAD: Múltiples reportes logran suspender temporalmente el perfil anónimo.", newsType: "good",
+        viral: "30%", anxiety: "Moderada", tension: "Media"
+      },
+      right: { 
+        text: "Comentar para ganar seguidores", tag: "UNIRSE", pop: +25, emo: -20, vic: -35, mod: -25,
+        news: "TENDENCIA: La cuenta de acoso suma más de 400 seguidores en la comunidad escolar.", newsType: "alert",
+        viral: "95%", anxiety: "Severa", tension: "Crítica"
+      }
+    },
+    "node_3": {
+      chapter: "ACTO III: HOSTIGAMIENTO FÍSICO",
+      title: "Acoso en los Pasillos",
+      desc: "En el recreo, un grupo rodea el casillero de Alex y han pegado las fotos impresas. Alex está paralizado.",
+      sender: "Pasillo Central",
+      preview: "Manta de burlas frente a todos...",
+      avatar: "🏫",
+      image: "imagenes/caso5.png",
+      imageTitle: "Pasillos del Colegio",
+      left: { 
+        text: "Intervenir y quitar los carteles", tag: "INTERVENIR", pop: -20, emo: +25, vic: +30, mod: +15,
+        news: "INCIDENTE: Un estudiante arranca material difamatorio de los casilleros del colegio.", newsType: "good",
+        viral: "20%", anxiety: "Baja", tension: "En descenso"
+      },
+      right: { 
+        text: "Grabar un video para TikTok", tag: "GRABAR", pop: +30, emo: -30, vic: -40, mod: -30,
+        news: "VIRAL: Video de las burlas en el recreo supera las 5,000 reproducciones.", newsType: "alert",
+        viral: "100%", anxiety: "Extrema", tension: "Caótica"
+      }
+    },
+    "node_4": {
+      chapter: "ACTO IV: LA INTERVENCIÓN",
+      title: "Cita con la Dirección",
+      desc: "La dirección convoca a una reunión urgente para investigar a los responsables del grupo de chat.",
+      sender: "Dirección Escolar",
+      preview: "Reunión obligatoria de curso...",
+      avatar: "📋",
+      image: "imagenes/caso6.png",
+      imageTitle: "Oficina de Dirección",
+      left: { 
+        text: "Revelar quiénes administraban el chat", tag: "DECLARAR", pop: -25, emo: +20, vic: +25, mod: +40,
+        news: "OFICIAL: Autoridades identifican a los instigadores principales del acoso digital.", newsType: "good",
+        viral: "0%", anxiety: "En recuperación", tension: "Bajo control"
+      },
+      right: { 
+        text: "Encubrir a tus amigos", tag: "CALLAR", pop: +15, emo: -25, vic: -20, mod: -30,
+        news: "INSPECCIÓN: La investigación escolar falla por pacto de silencio en el alumnado.", newsType: "alert",
+        viral: "85%", anxiety: "Grave", tension: "Alta"
+      }
+    },
+    "node_5": {
+      chapter: "ACTO V: CONSECUENCIAS",
+      title: "El Silencio en el Aula",
+      desc: "Alex no asistió a clases hoy. Su familia evalúa retirarlo del colegio definitivamente.",
+      sender: "Aviso Familiar",
+      preview: "Incapacidad por ansiedad aguda...",
+      avatar: "💔",
+      image: "imagenes/caso7.png",
+      imageTitle: "Escena de Reflexión",
+      left: { 
+        text: "Ir a su casa a darle apoyo", tag: "VISITAR", pop: -10, emo: +30, vic: +35, mod: +10,
+        news: "SOCIAL: Muestra de apoyo presencial mejora el cuadro de aislamiento de la víctima.", newsType: "good",
+        viral: "0%", anxiety: "Controlada", tension: "Normal"
+      },
+      right: { 
+        text: "Publicar un estado diciendo que exagera", tag: "JUSTIFICAR", pop: +10, emo: -35, vic: -30, mod: -20,
+        news: "ULTIMA HORA: Retiro definitivo de la víctima de la institución por acoso severo.", newsType: "alert",
+        viral: "100%", anxiety: "Colapso total", tension: "Alerta máxima"
+      }
+    }
+  };
+
+  // DATOS E IMÁGENES DEDICADAS PARA CADA FINAL
+  const endingsData = {
+    "good": {
+      title: "CULTURA DIGITAL RESPONSABLE",
+      desc: "Lograste romper la cadena de viralización. Alex volvió al colegio y se establecieron protocolos estrictos contra la violencia digital.",
+      image: "imagenes/FinalB.png"
+    },
+    "bad_crisis": {
+      title: "CRISIS DE CIBERACOSO",
+      desc: "El acoso superó los límites tolerables. Alex fue hospitalizado por una crisis de ansiedad severa. La falta de empatía destruyó el entorno escolar.",
+      image: "imagenes/FinalM.png"
+    },
+    "neutral": {
+      title: "COMUNIDAD FRACTURADA",
+      desc: "La situación se contuvo a medias. Aunque la viralización cesó, la desconfianza y el aislamiento afectaron a todo el grupo.",
+      image: "imagenes/FinalN.png"
+    }
+  };
+
+  const defaultSequence = ["node_1", "node_2", "node_3", "node_4", "node_5"];
+
+  function switchScreen(fromId, toId) {
+    document.getElementById(fromId).classList.add("hidden");
+    document.getElementById(toId).classList.remove("hidden");
+  }
+
+  function startGame() {
+    stats = { pop: 50, emo: 50, vic: 50, mod: 50 };
+    currentStep = 0;
+    storyQueue = [...defaultSequence];
+    document.getElementById("news-feed-container").innerHTML = '<div class="news-item">Red digital activa. Monitoreando entorno escolar...</div>';
+    updateMetricsUI();
+    loadCurrentNode();
+  }
+
+  function loadCurrentNode() {
+    const nodeKey = storyQueue[currentStep];
+    const data = extendedStoryTree[nodeKey];
+
+    if (!data) {
+      evaluateFinalOutcome();
+      return;
+    }
+
+    // Actualizar Panel Izquierdo (Imagen)
+    const imgElem = document.getElementById("stage-img");
+    imgElem.style.opacity = "0";
+    setTimeout(() => {
+      imgElem.src = data.image;
+      imgElem.style.opacity = "1";
+    }, 150);
+    document.getElementById("stage-img-title").innerText = data.imageTitle;
+
+    // Actualizar Textos e Interfaz del Centro
+    document.getElementById("node-chapter").innerText = data.chapter;
+    document.getElementById("node-title").innerText = data.title;
+    document.getElementById("node-desc").innerText = data.desc;
+    document.getElementById("bubble-sender").innerText = data.sender;
+    document.getElementById("bubble-preview").innerText = data.preview;
+    document.getElementById("avatar-icon").innerText = data.avatar;
+
+    document.getElementById("label-opt-a").innerText = data.left.text;
+    document.getElementById("tag-opt-a").innerText = data.left.tag;
+
+    document.getElementById("label-opt-b").innerText = data.right.text;
+    document.getElementById("tag-opt-b").innerText = data.right.tag;
+  }
+
+  function handleDecision(direction) {
+    const nodeKey = storyQueue[currentStep];
+    const data = extendedStoryTree[nodeKey];
+    const choice = direction === 'left' ? data.left : data.right;
+
+    // Aplicar Métricas
+    stats.pop = Math.min(100, Math.max(0, stats.pop + choice.pop));
+    stats.emo = Math.min(100, Math.max(0, stats.emo + choice.emo));
+    stats.vic = Math.min(100, Math.max(0, stats.vic + choice.vic));
+    stats.mod = Math.min(100, Math.max(0, stats.mod + choice.mod));
+
+    // Publicar Noticia e Impacto en Panel Lateral
+    addNewsItem(choice.news, choice.newsType);
+    document.getElementById("stat-viral").innerText = choice.viral;
+    document.getElementById("stat-anxiety").innerText = choice.anxiety;
+    document.getElementById("stat-tension").innerText = choice.tension;
+
+    triggerFlashEffect(direction === 'left' ? 'rgba(52, 211, 153, 0.2)' : 'rgba(244, 63, 94, 0.2)');
+    updateMetricsUI();
+
+    // Comprobación de Ruptura Prematura por Colapso de Salud de Alex
+    if (stats.vic <= 0) {
+      showEnding("bad_crisis");
+      return;
+    }
+
+    // Insertar Ramificación si existe
+    if (choice.nextSpecial && extendedStoryTree[choice.nextSpecial]) {
+      storyQueue.splice(currentStep + 1, 0, choice.nextSpecial);
+    }
+
+    currentStep++;
+
+    if (currentStep < storyQueue.length) {
+      loadCurrentNode();
+    } else {
+      evaluateFinalOutcome();
+    }
+  }
+
+  function addNewsItem(text, type) {
+    const feed = document.getElementById("news-feed-container");
+    const item = document.createElement("div");
+    item.className = `news-item ${type || ''}`;
+    item.innerText = text;
+    feed.prepend(item);
+  }
+
+  function triggerFlashEffect(color) {
+    const flash = document.getElementById("flash-effect");
+    flash.style.background = color;
+    flash.style.opacity = "1";
+    setTimeout(() => { flash.style.opacity = "0"; }, 300);
+  }
+
+  function updateMetricsUI() {
+    document.getElementById("bar-pop").style.width = stats.pop + "%";
+    document.getElementById("val-pop").innerText = stats.pop + "%";
+
+    document.getElementById("bar-emo").style.width = stats.emo + "%";
+    document.getElementById("val-emo").innerText = stats.emo + "%";
+
+    document.getElementById("bar-vic").style.width = stats.vic + "%";
+    document.getElementById("val-vic").innerText = stats.vic + "%";
+
+    document.getElementById("bar-mod").style.width = stats.mod + "%";
+    document.getElementById("val-mod").innerText = stats.mod + "%";
+  }
+
+  function evaluateFinalOutcome() {
+    if (stats.vic >= 60 && stats.mod >= 60) {
+      showEnding("good");
+    } else if (stats.pop >= 70 && stats.vic < 40) {
+      showEnding("bad_toxic");
+    } else {
+      showEnding("neutral");
+    }
+  }
+
+  function showEnding(type) {
+    const outcome = endingsData[type];
+    document.getElementById("end-title").innerText = outcome.title;
+    document.getElementById("end-desc").innerText = outcome.desc;
+    document.getElementById("end-image").src = outcome.image;
+
+    switchScreen('screen-game', 'screen-end');
+  }
+</script>
+
+</body>
+</html>

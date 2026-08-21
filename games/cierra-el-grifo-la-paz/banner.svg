@@ -1,0 +1,22 @@
+<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ec8e3"/>
+      <stop offset="100%" stop-color="#e8f6fb"/>
+    </linearGradient>
+  </defs>
+  <rect width="1000" height="300" fill="url(#sky3)"/>
+  <polygon points="0,220 200,90 350,220" fill="#ffffff" opacity="0.9"/>
+  <polygon points="150,220 200,90 260,220" fill="#dfeef7"/>
+  <rect x="0" y="220" width="1000" height="80" fill="#0288d1"/>
+  <ellipse cx="150" cy="230" rx="90" ry="16" fill="#01579b" opacity="0.4"/>
+  <ellipse cx="750" cy="250" rx="120" ry="20" fill="#01579b" opacity="0.3"/>
+  <g fill="#0288d1">
+    <circle cx="620" cy="100" r="10"/><path d="M620 60 q14 30 0 40 q-14 -10 0 -40z"/>
+    <circle cx="700" cy="140" r="8"/><path d="M700 108 q11 24 0 32 q-11 -8 0 -32z"/>
+    <circle cx="560" cy="150" r="7"/><path d="M560 122 q9 20 0 28 q-9 -8 0 -28z"/>
+  </g>
+  <text x="500" y="70" font-size="20" fill="#01579b" text-anchor="middle" font-family="Segoe UI, Arial" letter-spacing="4" font-weight="700">LA PAZ &#8226; BOLIVIA</text>
+  <text x="500" y="120" font-size="52" font-weight="900" fill="#01579b" text-anchor="middle" font-family="Segoe UI, Arial">¡CIERRA EL GRIFO!</text>
+  <text x="500" y="150" font-size="20" fill="#0277bd" text-anchor="middle" font-family="Segoe UI, Arial">Reto de 60 segundos &#8226; Cuida el agua</text>
+</svg>

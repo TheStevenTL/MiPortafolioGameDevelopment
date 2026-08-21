@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash Rush - ¡A Reciclar! ♻️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #87CEEB 0%, #a8e6cf 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+            font-family: 'Open Sans', sans-serif;
+            overflow-x: hidden;
+            padding: 20px 0;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Fredoka One', cursive;
+            color: #fff;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        #game-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 0px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 950px;
+            text-align: center;
+            position: relative;
+            border: 5px solid #fff;
+        }
+
+        #hud {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: linear-gradient(180deg, #ffd54f 0%, #ffb300 100%);
+            padding: 12px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-family: 'Fredoka One', cursive;
+            color: #5d4037;
+            font-size: 1.1rem;
+            border-bottom: 4px solid #f57c00;
+        }
+
+        .lbl-vibrante {
+            color: #fff;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+            font-size: 1.4rem;
+        }
+
+        #item-zone {
+            height: 190px; /* Incrementado ligeramente para dar espacio al emoji más grande */
+            background: linear-gradient(180deg, #e0e0e0 0%, #bdbdbd 100%);
+            border: 6px solid #9e9e9e;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.2);
+            padding: 15px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #item-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            animation: popIn 0.25s ease-out;
+        }
+
+        #item-emoji {
+            font-size: 4.5rem; /* ¡Tamaño aumentado para mayor claridad! */
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        #item-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            text-shadow: 1px 1px 0px #fff;
+            background: rgba(255,255,255,0.7);
+            padding: 4px 16px;
+            border-radius: 20px;
+        }
+
+        #timer-counter-container {
+            margin-top: 12px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4rem;
+            background: #424242;
+            color: #fff;
+            padding: 4px 20px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        #timer-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+            transition: background-color 0.2s ease;
+        }
+
+        #bins-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .bin {
+            padding: 15px 10px;
+            border-radius: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 6px 0px rgba(0,0,0,0.2);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            position: relative;
+            border: 3px solid transparent;
+        }
+
+        .bin-header {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .bin-icon {
+            font-size: 1.8rem;
+        }
+
+        .bin-description {
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.12);
+            padding: 6px;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .bin-arrow-guide {
+            background: rgba(255,255,255,0.25);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        .bin.selected {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px rgba(0,0,0,0.2);
+        }
+
+        .bin-azul { background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%); border-color: #0d47a1; }
+        .bin-amarillo { background: linear-gradient(180deg, #ffeb3b 0%, #fbc02d 100%); color: #333; border-color: #f57c00; }
+        .bin-amarillo .bin-description { background: rgba(0,0,0,0.06); color: #424242; }
+        .bin-amarillo .bin-arrow-guide { background: rgba(0,0,0,0.08); color: #333; }
+        
+        .bin-verde { background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%); border-color: #1b5e20; }
+        .bin-marron { background: linear-gradient(180deg, #8d6e63 0%, #5d4037 100%); border-color: #3e2723; }
+        .bin-gris { background: linear-gradient(180deg, #b0bec5 0%, #78909c 100%); border-color: #37474f; }
+        .bin-negro { background: linear-gradient(180deg, #424242 0%, #212121 100%); border-color: #000; }
+
+        #controls-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 15px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 10px;
+            border: 2px solid #eee;
+        }
+
+        .btn-flash {
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(180deg, #ff5252 0%, #ff1744 100%);
+            color: white;
+            padding: 12px 35px;
+            border: 3px solid #fff;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0px #b71c1c, 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+            margin-top: 15px;
+        }
+
+        .btn-flash:hover {
+            background: linear-gradient(180deg, #ff1744 0%, #d50000 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px #b71c1c, 0 12px 25px rgba(0,0,0,0.25);
+        }
+
+        .btn-flash:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #b71c1c, 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(135,206,235,0.98) 0%, rgba(168,230,207,0.98) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            z-index: 10;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .screen h2 { font-size: 3rem; margin-bottom: 5px; }
+        
+        .guide-container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+            max-width: 700px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            text-align: left;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .guide-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .gi-azul { background: #1976D2; }
+        .gi-amarillo { background: #fbc02d; color: #333; }
+        .gi-verde { background: #388E3C; }
+        .gi-marron { background: #5d4037; }
+        .gi-gris { background: #78909c; }
+        .gi-negro { background: #212121; }
+
+        .hide { display: none !important; }
+        .danger-text { color: #d32f2f; }
+        .success-text { color: #388e3c; }
+
+        #item-zone.flash-success { background: linear-gradient(180deg, #a5d6a7 0%, #66bb6a 100%); border-color: #388e3c; }
+        #item-zone.flash-danger { background: linear-gradient(180deg, #ef9a9a 0%, #ef5350 100%); border-color: #d32f2f; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>TRASH RUSH</h1>
+    
+    <div id="hud">
+        <div class="stat">NIVEL <br><span id="lbl-level" class="lbl-vibrante">1</span></div>
+        <div class="stat">FALTAN <br><span id="lbl-progress" class="lbl-vibrante">0/2</span></div>
+        <div class="stat">VIDAS <br><span id="lbl-lives" class="danger-text">❤❤❤</span></div>
+    </div>
+
+    <div id="item-zone">
+        <div id="item-wrapper">
+            <div id="item-emoji">♻️</div>
+            <div id="item-text">Cargando...</div>
+        </div>
+        <div id="timer-counter-container">
+            <span id="timer-dot"></span>
+            <span id="lbl-timer-text">0.0s</span>
+        </div>
+    </div>
+
+    <div id="bins-container">
+        <div class="bin bin-azul" id="bin-papel">
+            <div class="bin-header"><span class="bin-icon">📄</span><span>Papel</span></div>
+            <div class="bin-description">Cartón, diarios, cuadernos</div>
+            <div class="bin-arrow-guide">↑ Arriba</div>
+        </div>
+        <div class="bin bin-amarillo" id="bin-plastico">
+            <div class="bin-header"><span class="bin-icon">🧴</span><span>Plástico</span></div>
+            <div class="bin-description">Botellas, bolsas, envolturas</div>
+            <div class="bin-arrow-guide">↓ Abajo</div>
+        </div>
+        <div class="bin bin-verde" id="bin-vidrio">
+            <div class="bin-header"><span class="bin-icon">🍾</span><span>Vidrio</span></div>
+            <div class="bin-description">Botellas, frascos, tarros</div>
+            <div class="bin-arrow-guide">← Izq</div>
+        </div>
+        <div class="bin bin-marron" id="bin-organico">
+            <div class="bin-header"><span class="bin-icon">🍎</span><span>Orgánico</span></div>
+            <div class="bin-description">Restos comida, cáscaras</div>
+            <div class="bin-arrow-guide">→ Der</div>
+        </div>
+        <div class="bin bin-gris" id="bin-metal">
+            <div class="bin-header"><span class="bin-icon">🥫</span><span>Metal</span></div>
+            <div class="bin-description">Latas, aluminio, tapas</div>
+            <div class="bin-arrow-guide">[Espacio] + ←</div>
+        </div>
+        <div class="bin bin-negro" id="bin-no-reciclable">
+            <div class="bin-header"><span class="bin-icon">🚬</span><span>Resto</span></div>
+            <div class="bin-description">Pañales, colillas, cerámica</div>
+            <div class="bin-arrow-guide">[Espacio] + →</div>
+        </div>
+    </div>
+
+    <div id="controls-info">
+        Usa las <strong>Flechas</strong> para la fila superior. <br> Mantén <strong>Barra Espaciadora + Flechas Horizontales</strong> para la fila inferior.
+    </div>
+
+    <div id="start-screen" class="screen">
+        <h2>¡TRASH RUSH!</h2>
+        <p style="margin-bottom: 5px; font-size: 1.1rem; font-weight: bold; color: #333;">Aprende qué va en cada contenedor antes de iniciar:</p>
+        
+        <div class="guide-container">
+            <div class="guide-item gi-azul"><span>📄 Papel:</span> Cartón y hojas limpias</div>
+            <div class="guide-item gi-amarillo"><span>🧴 Plástico:</span> Botellas y bolsas</div>
+            <div class="guide-item gi-verde"><span>🍾 Vidrio:</span> Envases de botellas/frascos</div>
+            <div class="guide-item gi-marron"><span>🍎 Orgánico:</span> Comida y frutas</div>
+            <div class="guide-item gi-gris"><span>🥫 Metal:</span> Latas de refresco/atún</div>
+            <div class="guide-item gi-negro"><span>🚬 Resto:</span> No reciclable (pañales, colillas)</div>
+        </div>
+
+        <button class="btn-flash" onclick="startGame()">¡ENTENDIDO, JUGAR!</button>
+    </div>
+
+    <div id="gameover-screen" class="screen hide">
+        <h2 class="danger-text">¡GAME OVER!</h2>
+        <p>Te has quedado sin vidas. ¡Repasa la guía y vuelve a intentarlo!</p>
+        <button class="btn-flash" onclick="startGame()">REINTENTAR</button>
+    </div>
+
+    <div id="victory-screen" class="screen hide">
+        <h2 class="success-text">¡VICTORIA!</h2>
+        <p>¡Eres un experto! Has superado con éxito los 20 niveles de reciclaje.</p>
+        <button class="btn-flash" onclick="startGame()">JUGAR OTRA VEZ</button>
+    </div>
+</div>
+
+<script>
+    const garbageItems = [
+        { emoji: "📦", name: "Caja de Cartón Corrugado", type: "papel" },
+        { emoji: "📰", name: "Periódico Viejo Arrugado", type: "papel" },
+        { emoji: "📝", name: "Hojas Escritas de Cuaderno", type: "papel" },
+        { emoji: "✉️", name: "Sobre de Papel para Cartas", type: "papel" },
+        
+        { emoji: "🍼", name: "Botella de Refresco Vacía", type: "plastico" },
+        { emoji: "🛍️", name: "Bolsa Plástica de Supermercado", type: "plastico" },
+        { emoji: "🧴", name: "Envase Plástico de Champú", type: "plastico" },
+        { emoji: "🍿", name: "Envoltura Metalizada de Snacks", type: "plastico" },
+        
+        { emoji: "🍾", name: "Botella de Vidrio de Vino", type: "vidrio" },
+        { emoji: "🫙", name: "Frasco Vacío de Mermelada", type: "vidrio" },
+        { emoji: "🧪", name: "Frasco de Perfume de Vidrio", type: "vidrio" },
+        
+        { emoji: "🍎", name: "Cáscara de Manzana Mordida", type: "organico" },
+        { emoji: "🍌", name: "Cáscara de Plátano Madura", type: "organico" },
+        { emoji: "🥚", name: "Cáscaras de Huevo Rotas", type: "organico" },
+        { emoji: "☕", name: "Residuos y Filtros de Café", type: "organico" },
+        
+        { emoji: "🥫", name: "Lata de Conserva de Atún", type: "metal" },
+        { emoji: "🥤", name: "Lata de Aluminio de Soda", type: "metal" },
+        { emoji: "🛡️", name: "Papel de Aluminio Arrugado", type: "metal" },
+        
+        { emoji: "🚬", name: "Colilla de Cigarrillo Apagada", type: "no-reciclable" },
+        { emoji: "🧻", name: "Pañal Desechable Usado", type: "no-reciclable" },
+        { emoji: "🥣", name: "Plato de Cerámica Roto", type: "no-reciclable" },
+        { emoji: "🧽", name: "Esponja Vieja de Cocina", type: "no-reciclable" }
+    ];
+
+    const controlsMap = {
+        "ArrowUp": "papel", "ArrowDown": "plastico", "ArrowLeft": "vidrio", "ArrowRight": "organico",
+        "Space+ArrowLeft": "metal", "Space+ArrowRight": "no-reciclable"
+    };
+
+    let state = {
+        level: 1, lives: 3, progress: 0, required: 2,
+        currentItem: null, timeLimit: 6000, 
+        startTime: null, isSpacePressed: false, canInput: false, animationFrameId: null
+    };
+
+    const dom = {
+        level: document.getElementById("lbl-level"),
+        progress: document.getElementById("lbl-progress"),
+        lives: document.getElementById("lbl-lives"),
+        emoji: document.getElementById("item-emoji"),
+        text: document.getElementById("item-text"),
+        timerText: document.getElementById("lbl-timer-text"),
+        timerDot: document.getElementById("timer-dot"),
+        zone: document.getElementById("item-zone"),
+        wrapper: document.getElementById("item-wrapper"),
+        screens: {
+            start: document.getElementById("start-screen"),
+            go: document.getElementById("gameover-screen"),
+            vic: document.getElementById("victory-screen")
+        }
+    };
+
+    function startGame() {
+        state = {
+            ...state, level: 1, lives: 3, progress: 0, 
+            canInput: true, isSpacePressed: false
+        };
+        
+        dom.screens.start.classList.add("hide");
+        dom.screens.go.classList.add("hide");
+        dom.screens.vic.classList.add("hide");
+        
+        updateDifficulty();
+        updateHUD();
+        spawnItem();
+    }
+
+    function updateDifficulty() {
+        if (state.level <= 3) {
+            state.required = 2;
+            state.timeLimit = 6000; 
+        } else if (state.level <= 6) {
+            state.required = 6;
+            state.timeLimit = 5000;
+        } else if (state.level <= 15) {
+            state.required = 8;
+            state.timeLimit = 4000;
+        } else {
+            state.required = 12;
+            state.timeLimit = 2800; 
+        }
+    }
+
+    function updateHUD() {
+        dom.level.innerText = state.level;
+        dom.progress.innerText = `${state.progress}/${state.required}`;
+        dom.lives.innerText = "❤".repeat(state.lives) + "•".repeat(3 - state.lives);
+    }
+
+    function spawnItem() {
+        if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+
+        const lastItem = state.currentItem;
+        let newItem;
+        do {
+            newItem = garbageItems[Math.floor(Math.random() * garbageItems.length)];
+        } while (lastItem && newItem.name === lastItem.name);
+        
+        state.currentItem = newItem;
+        
+        dom.emoji.innerText = state.currentItem.emoji;
+        dom.text.innerText = state.currentItem.name;
+        
+        dom.wrapper.style.animation = 'none';
+        dom.wrapper.offsetHeight; 
+        dom.wrapper.style.animation = null; 
+
+        state.startTime = performance.now();
+        state.canInput = true;
+
+        state.animationFrameId = requestAnimationFrame(updateTimer);
+    }
+
+    function updateTimer(timestamp) {
+        if (!state.canInput) return;
+
+        const elapsed = timestamp - state.startTime;
+        const remaining = Math.max(0, state.timeLimit - elapsed);
+        const ratio = remaining / state.timeLimit;
+
+        dom.timerText.innerText = (remaining / 1000).toFixed(1) + "s";
+
+        if (ratio > 0.5) {
+            dom.timerDot.style.backgroundColor = "#4CAF50";
+        } else if (ratio > 0.2) {
+            dom.timerDot.style.backgroundColor = "#FFEB3B";
+        } else {
+            dom.timerDot.style.backgroundColor = "#F44336";
+        }
+
+        if (elapsed >= state.timeLimit) {
+            handleMistake();
+        } else {
+            state.animationFrameId = requestAnimationFrame(updateTimer);
+        }
+    }
+
+    function handleMistake() {
+        state.canInput = false;
+        if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+        
+        dom.timerText.innerText = "0.0s";
+        dom.timerDot.style.backgroundColor = "#F44336";
+
+        state.lives--;
+        updateHUD();
+        flashZone("flash-danger");
+
+        if (state.lives <= 0) {
+            endGame(false);
+        } else {
+            setTimeout(spawnItem, 700);
+        }
+    }
+
+    function handleSuccess() {
+        state.canInput = false;
+        if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+
+        state.progress++;
+        updateHUD();
+        flashZone("flash-success");
+
+        if (state.progress >= state.required) {
+            state.level++;
+            state.progress = 0;
+            if (state.level > 20) {
+                endGame(true);
+                return;
+            }
+            updateDifficulty();
+            updateHUD();
+        }
+
+        setTimeout(spawnItem, 450);
+    }
+
+    function flashZone(className) {
+        dom.zone.classList.add(className);
+        setTimeout(() => dom.zone.classList.remove(className), 300);
+    }
+
+    function endGame(isVictory) {
+        state.canInput = false;
+        if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+        
+        if (isVictory) dom.screens.vic.classList.remove("hide");
+        else dom.screens.go.classList.remove("hide");
+    }
+
+    window.addEventListener("keydown", (e) => {
+        if (!state.canInput) return;
+
+        if (e.code === "Space") {
+            state.isSpacePressed = true;
+            e.preventDefault();
+            return;
+        }
+
+        if (e.key.startsWith("Arrow")) {
+            e.preventDefault();
+            let inputCombo = state.isSpacePressed ? `Space+${e.key}` : e.key;
+            const chosenType = controlsMap[inputCombo];
+
+            if (chosenType) {
+                pressBin(chosenType);
+                if (chosenType === state.currentItem.type) {
+                    handleSuccess();
+                } else {
+                    handleMistake();
+                }
+            }
+        }
+    });
+
+    window.addEventListener("keyup", (e) => {
+        if (e.code === "Space") {
+            state.isSpacePressed = false;
+        }
+    });
+
+    function pressBin(type) {
+        const map = {
+            "papel": "bin-papel", "plastico": "bin-plastico", "vidrio": "bin-vidrio",
+            "organico": "bin-organico", "metal": "bin-metal", "no-reciclable": "bin-no-reciclable"
+        };
+        const el = document.getElementById(map[type]);
+        if (el) {
+            el.classList.add("selected");
+            setTimeout(() => el.classList.remove("selected"), 150);
+        }
+    }
+</script>
+</body>
+</html>
