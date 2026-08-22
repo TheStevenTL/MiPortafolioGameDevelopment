@@ -36,7 +36,7 @@
 
 | Pantalla inicial | Gameplay | Game Over |
 |---|---|---|
-| ![inicio](../../assets/screenshots/masth-crush-inicio.png) | ![gameplay](../../assets/placeholder.svg) | ![gameover](../../assets/placeholder.svg) |
+| ![inicio](assets/screenshots/math-crush-inicio.png) | ![gameplay](assets/screenshots/math-crush-gameplay.png) | ![gameover](assets/screenshots/math-crush-gameover.png) |
 
 ## ▶️ Jugar
 
