@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanLife: Dark Edition</title>
+    <style>
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --border-dark: #334155;
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    
+    --neon-green: #10b981;
+    --neon-blue: #38bdf8;
+    --neon-yellow: #fbbf24;
+    --neon-red: #f43f5e;
+    --neon-purple: #a855f7;
+
+    --tile-payday: #064e3b;
+    --tile-payday-border: #10b981;
+    --tile-opp: #0c4a6e;
+    --tile-opp-border: #38bdf8;
+    --tile-life: #451a03;
+    --tile-life-border: #fbbf24;
+    --tile-emerg: #4c0519;
+    --tile-emerg-border: #f43f5e;
+    --tile-fork: #3b0764;
+    --tile-fork-border: #a855f7;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Dark */
+.app-header {
+    background-color: #020617;
+    border-bottom: 1px solid var(--border-dark);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 2.2rem;
+}
+
+.app-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #38bdf8, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.edition-tag {
+    font-size: 0.75rem;
+    background: var(--neon-purple);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    -webkit-text-fill-color: initial;
+}
+
+.app-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.btn-secondary {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--border-dark);
+}
+
+/* Layout Grid */
+.game-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1700px;
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-dark);
+    padding-bottom: 10px;
+}
+
+.badge {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.players-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.player-card {
+    background: #0f172a;
+    border: 1px solid var(--border-dark);
+    border-radius: 10px;
+    padding: 12px;
+    transition: all 0.2s;
+}
+
+.player-card.active {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+.player-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.player-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.player-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: var(--text-muted);
+}
+
+.stat-val {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Main Area */
+.main-board-area {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.turn-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    padding: 15px 25px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.turn-info .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.dice-action-zone {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dice-box {
+    width: 50px;
+    height: 50px;
+    background: #0f172a;
+    border: 1px solid var(--neon-blue);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.dice-box.spinning {
+    animation: spin 0.4s infinite linear;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-roll {
+    background: linear-gradient(135deg, var(--neon-green), #059669);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-roll:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-roll:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Board Canvas & Grid */
+.board-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+}
+
+.tile {
+    background: #0f172a;
+    border: 2px solid var(--border-dark);
+    border-radius: 10px;
+    min-height: 100px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.tile:hover {
+    transform: translateY(-2px);
+}
+
+.tile-number {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-muted);
+}
+
+.tile-icon {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.tile-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Specific Tile Colors */
+.tile-payday { background: var(--tile-payday); border-color: var(--tile-payday-border); }
+.tile-opportunity { background: var(--tile-opp); border-color: var(--tile-opp-border); }
+.tile-lifestyle { background: var(--tile-life); border-color: var(--tile-life-border); }
+.tile-emergency { background: var(--tile-emerg); border-color: var(--tile-emerg-border); }
+.tile-fork { background: var(--tile-fork); border-color: var(--tile-fork-border); }
+.tile-finish { background: #1e1b4b; border-color: var(--neon-purple); }
+
+.tokens-container {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 22px;
+    margin-top: 4px;
+}
+
+.board-token {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+
+/* Modales Dark */
+.modal-overlay {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(2, 6, 23, 0.88);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 520px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+}
+
+.rules-card {
+    max-width: 620px;
+    text-align: left;
+}
+
+.rules-body {
+    margin: 20px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.rule-box {
+    background: #0f172a;
+    border: 1px solid var(--border-dark);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.rule-icon { font-size: 1.4rem; }
+.rule-box h4 { color: var(--text-main); margin: 4px 0; font-size: 0.95rem; }
+.rule-box p { font-size: 0.8rem; line-height: 1.3; }
+
+.rules-footer-note {
+    background: rgba(56, 189, 248, 0.1);
+    border-left: 3px solid var(--neon-blue);
+    padding: 10px;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    border-radius: 0 6px 6px 0;
+}
+
+.modal-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--neon-blue);
+    color: #020617;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.modal-card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+.modal-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.modal-buttons-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-choice {
+    padding: 12px 18px;
+    border: 1px solid var(--border-dark);
+    background: #0f172a;
+    color: var(--text-main);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-choice:hover {
+    border-color: var(--neon-blue);
+    background: var(--bg-card-hover);
+}
+
+.trophy-icon { font-size: 3.5rem; display: block; margin-bottom: 10px; }
+.leaderboard-list { margin: 20px 0; display: flex; flex-direction: column; gap: 8px; }
+.leaderboard-item { display: flex; justify-content: space-between; padding: 10px 15px; background: #0f172a; border-radius: 8px; font-weight: 600; }
+.leaderboard-item.first { border: 1px solid var(--neon-yellow); color: var(--neon-yellow); }
+</style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <!-- Header Principal -->
+    <header class="app-header">
+        <div class="logo-container">
+            <span class="logo-icon">🎲</span>
+            <div>
+                <h1>FinanLife <span class="edition-tag">PRO</span></h1>
+                <p>Simulador de Decisiones Financieras & Bienestar</p>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="btn-sound" class="btn-secondary" onclick="toggleSound()">🔊 Sonido: ON</button>
+        </div>
+    </header>
+
+    <main class="game-layout">
+        <!-- Sidebar Izquierda: Estado de Jugadores -->
+        <aside class="sidebar">
+            <div class="panel-header">
+                <h2>Jugadores</h2>
+                <span class="badge">4 Jugadores</span>
+            </div>
+            <div id="players-list" class="players-container"></div>
+        </aside>
+
+        <!-- Área Central de Tablero y Control -->
+        <section class="main-board-area">
+            
+            <!-- Barra de Acción y Turno -->
+            <div class="turn-bar">
+                <div class="turn-info">
+                    <span class="label">Turno Activo:</span>
+                    <h3 id="current-player-name">Cargando...</h3>
+                </div>
+
+                <div class="dice-action-zone">
+                    <div id="dice-visual" class="dice-box">
+                        <span id="dice-value">🎲</span>
+                    </div>
+                    <button id="btn-spin" class="btn-roll" onclick="playTurn()">
+                        ⚡ Tirar Dado / Avanzar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tablero Visual -->
+            <div class="board-wrapper">
+                <div id="board" class="board-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal 1: Pantalla de Inicio / Reglas -->
+    <div id="start-modal" class="modal-overlay">
+        <div class="modal-card rules-card">
+            <span class="modal-badge">REGLAS DEL JUEGO</span>
+            <h2>Bienvenido a FinanLife</h2>
+            <div class="rules-body">
+                <p>Compite con tus amigos tomando decisiones financieras, educativas y de estilo de vida a lo largo del tablero.</p>
+                
+                <div class="rules-grid">
+                    <div class="rule-box">
+                        <span class="rule-icon">💵</span>
+                        <h4>Dinero</h4>
+                        <p>Cobras salarios y gestionas inversiones. Cuidado con las deudas.</p>
+                    </div>
+                    <div class="rule-box">
+                        <span class="rule-icon">😊</span>
+                        <h4>Felicidad</h4>
+                        <p>Toma tiempo libre y disfruta sin poner en riesgo tu estabilidad.</p>
+                    </div>
+                    <div class="rule-box">
+                        <span class="rule-icon">⭐</span>
+                        <h4>Inteligencia</h4>
+                        <p>Estudia y capacítate para aumentar el salario de tus días de pago.</p>
+                    </div>
+                    <div class="rule-box">
+                        <span class="rule-icon">🔀</span>
+                        <h4>Bifurcaciones</h4>
+                        <p>Toma caminos clave: Universidad vs Empleo, Emprender vs Corporativo.</p>
+                    </div>
+                </div>
+
+                <p class="rules-footer-note">🏆 **Condición de victoria:** Quien tenga la puntuación combinada más alta al llegar a la Jubilación gana.</p>
+            </div>
+            <button class="btn-roll full-width" onclick="startTurnOrderRoll()">🎲 Sortear Orden e Iniciar</button>
+        </div>
+    </div>
+
+    <!-- Modal 2: Resultado del Sorteo de Turnos -->
+    <div id="order-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <span class="modal-badge">SORTEO DE TURNOS</span>
+            <h2>¡Orden de Juego Definido!</h2>
+            <p>Se ha realizado un sorteo aleatorio para determinar quién inicia:</p>
+            <div id="order-list" class="leaderboard-list"></div>
+            <button class="btn-roll full-width" onclick="closeOrderModal()">🚀 ¡A Jugar!</button>
+        </div>
+    </div>
+
+    <!-- Modal 3: Eventos y Decisiones -->
+    <div id="event-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div id="modal-badge" class="modal-badge">EVENTO</div>
+            <h2 id="modal-title">Título del Evento</h2>
+            <p id="modal-description">Descripción del evento...</p>
+            <div id="modal-choices" class="modal-buttons-grid"></div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Victoria Final -->
+    <div id="victory-modal" class="modal-overlay hidden">
+        <div class="modal-card victory-card">
+            <span class="trophy-icon">🏆</span>
+            <h2>¡Partida Finalizada!</h2>
+            <p>Todos los jugadores han alcanzado la etapa de Jubilación.</p>
+            <div id="victory-leaderboard" class="leaderboard-list"></div>
+            <button class="btn-roll" onclick="location.reload()">🎮 Nueva Partida</button>
+        </div>
+    </div>
+
+    <script>
+// ==========================================
+// 1. SISTEMA DE SONIDOS SINTETIZADOS (SEGURO)
+// ==========================================
+let soundEnabled = true;
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playSound(type) {
+    if (!soundEnabled) return;
+    try {
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'dice') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+            osc.start(now);
+            osc.stop(now + 0.08);
+        } else if (type === 'money') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        } else if (type === 'emergency') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.linearRampToValueAtTime(100, now + 0.25);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'victory') {
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + i * 0.1);
+                g.gain.setValueAtTime(0.08, now + i * 0.1);
+                g.gain.linearRampToValueAtTime(0.01, now + i * 0.1 + 0.25);
+                o.start(now + i * 0.1);
+                o.stop(now + i * 0.1 + 0.25);
+            });
+        }
+    } catch(e) {
+        console.warn("Audio Context error:", e);
+    }
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('btn-sound').innerText = soundEnabled ? "🔊 Sonido: ON" : "🔇 Sonido: OFF";
+}
+
+// ==========================================
+// 2. TABLERO EXPANDIDO (38 CASILLAS)
+// ==========================================
+const boardNodes = {
+    0: { id: 0, name: "Comienzo de Vida", type: "fork", icon: "🚀", desc: "Elige tu rumbo inicial:",
+         choices: [
+             { text: "Universidad (Deuda $600, +35 Inteligencia)", next: 1, debt: 600, int: 35 },
+             { text: "Trabajo Temprano (Ingreso inmediato $500)", next: 5, money: 500 }
+         ]
+    },
+    1: { id: 1, name: "Biblioteca & Estudio", type: "opportunity", icon: "📖", next: 2, cost: 100, intBonus: 15, desc: "¿Comprar libros especializados (+15 Inteligencia) por $100?" },
+    2: { id: 2, name: "Convivencia Campus", type: "lifestyle", icon: "🍕", next: 3, cost: 80, hapBonus: 20, desc: "¿Pagar $80 para un evento social universitario (+20 Felicidad)?" },
+    3: { id: 3, name: "Proyecto de Titulación", type: "opportunity", icon: "🔬", next: 4, cost: 150, intBonus: 20, desc: "¿Financiar prototipo de tesis (+20 Inteligencia) por $150?" },
+    4: { id: 4, name: "Graduación Profesional", type: "payday", icon: "🎓", next: 9, desc: "¡Título obtenido! Cobras tu primer salario profesional." },
+
+    5: { id: 5, name: "Primer Empleo Operativo", type: "payday", icon: "💼", next: 6, desc: "Cobro de tu salario inicial." },
+    6: { id: 6, name: "Turno Nocturno Extra", type: "lifestyle", icon: "⏰", next: 7, cost: 0, hapBonus: -15, moneyBonus: 250, desc: "Trabajas turno extra: Ganas $250 pero pierdes -15 Felicidad por agotamiento." },
+    7: { id: 7, name: "Curso Técnico Práctico", type: "opportunity", icon: "🛠️", next: 8, cost: 120, intBonus: 15, desc: "¿Aprender una habilidad técnica rápida (+15 Inteligencia) por $120?" },
+    8: { id: 8, name: "Fondo Ahorro Inicial", type: "opportunity", icon: "🐷", next: 9, cost: 200, intBonus: 10, desc: "¿Ahorrar $200 en tu cuenta básica (+10 Inteligencia financiera)?" },
+
+    9: { id: 9, name: "Día de Pago", type: "payday", icon: "💵", next: 10, desc: "Cobras tu salario acumulado." },
+    10: { id: 10, name: "Inversión en Cripto/Fondos", type: "opportunity", icon: "📊", next: 11, cost: 300, intBonus: 15, moneyBonus: 450, desc: "¿Invertir $300 con la posibilidad de obtener $450 y ganar experiencia?" },
+    11: { id: 11, name: "Falla de Electrodoméstico", type: "emergency", icon: "🔌", next: 12, cost: 200, desc: "Se dañó tu refrigerador. Reparación urgente: $200." },
+    12: { id: 12, name: "Viaje de Fin de Semana", type: "lifestyle", icon: "🏕️", next: 13, cost: 150, hapBonus: 25, desc: "¿Pagar $150 por un campamento de descanso (+25 Felicidad)?" },
+
+    13: { id: 13, name: "Encrucijada Profesional", type: "fork", icon: "🔀", desc: "Elige la siguiente etapa de tu carrera:",
+          choices: [
+              { text: "Emprender Negocio Propio (Inversión $500)", next: 14, cost: 500 },
+              { text: "Crecer en Empresa Corporativa (Estabilidad)", next: 18 }
+          ]
+    },
+    14: { id: 14, name: "Página Web y Marca", type: "opportunity", icon: "🌐", next: 15, cost: 200, intBonus: 20, desc: "¿Crear la plataforma digital de tu startup (+20 Inteligencia) por $200?" },
+    15: { id: 15, name: "Primer Gran Cliente", type: "payday", icon: "🤝", next: 16, desc: "¡Contrato cerrado! Ingreso extraordinario del negocio." },
+    16: { id: 16, name: "Estrés Laboral (Burnout)", type: "lifestyle", icon: "🧘", next: 17, cost: 120, hapBonus: 25, desc: "¿Pagar $120 por terapia/spa (+25 Felicidad) para reducir el estrés?" },
+    17: { id: 17, name: "Inversionista Ángel", type: "opportunity", icon: "🚀", next: 22, cost: 300, moneyBonus: 800, desc: "¿Inyectar $300 a tu empresa para recibir $800 de retorno?" },
+
+    18: { id: 18, name: "Ascenso a Supervisión", type: "payday", icon: "📈", next: 19, desc: "Aumento de puesto. Cobras salario ajustado." },
+    19: { id: 19, name: "Diplomado Ejecutivo", type: "opportunity", icon: "👔", next: 20, cost: 300, intBonus: 25, desc: "¿Pagar $300 por capacitación en liderazgo (+25 Inteligencia)?" },
+    20: { id: 20, name: "Bono por Objetivos", type: "payday", icon: "🎁", next: 21, desc: "Cobro de salario regular más bono anual." },
+    21: { id: 21, name: "Gasto Médico Dental", type: "emergency", icon: "🦷", next: 22, cost: 250, desc: "Tratamiento dental no cubierto por seguro. Pagas $250." },
+
+    22: { id: 22, name: "Día de Pago Intermedio", type: "payday", icon: "💳", next: 23, desc: "Cobro periódico de haberes." },
+    23: { id: 23, name: "Decisión de Bienestar", type: "fork", icon: "🏠", desc: "Elige prioridad para esta etapa:",
+          choices: [
+              { text: "Comprar Auto Familiar (Coste $400, +20 Felicidad)", next: 24, cost: 400, hap: 20 },
+              { text: "Invertir en Propiedades (Coste $400, +20 Inteligencia)", next: 27, cost: 400, int: 20 }
+          ]
+    },
+    24: { id: 24, name: "Paseo por Carretera", type: "lifestyle", icon: "🚗", next: 25, cost: 100, hapBonus: 20, desc: "¿Hacer un roadtrip por $100 (+20 Felicidad)?" },
+    25: { id: 25, name: "Mantenimiento Vehicular", type: "emergency", icon: "⚙️", next: 26, cost: 180, desc: "Servicio de frenos y llantas: Pagas $180." },
+    26: { id: 26, name: "Día de Pago", type: "payday", icon: "💵", next: 30, desc: "Cobras tus ingresos." },
+
+    27: { id: 27, name: "Renta de Inmueble", type: "payday", icon: "🏢", next: 28, desc: "Recibes rentas de tus inversiones inmobiliarias." },
+    28: { id: 28, name: "Remodelación", type: "opportunity", icon: "🏗️", next: 29, cost: 200, intBonus: 15, desc: "¿Remodelar para subir valor (+15 Inteligencia) por $200?" },
+    29: { id: 29, name: "Impuesto a la Propiedad", type: "emergency", icon: "📝", next: 30, cost: 150, desc: "Pago de predial e impuestos anuales: $150." },
+
+    30: { id: 30, name: "Día de Pago Pre-Jubilación", type: "payday", icon: "💰", next: 31, desc: "Cobro de tu último salario completo." },
+    31: { id: 31, name: "Seguro de Retiro Privado", type: "opportunity", icon: "🛡️", next: 32, cost: 300, intBonus: 20, desc: "¿Blindar tu jubilación (+20 Inteligencia) aportando $300?" },
+    32: { id: 32, name: "Fiesta de Despedida Laboral", type: "lifestyle", icon: "🎉", next: 33, cost: 150, hapBonus: 30, desc: "¿Celebrar tu trayectoria (+30 Felicidad) invirtiendo $150?" },
+    33: { id: 33, name: "Reparación de Techo", type: "emergency", icon: "🏠", next: 34, cost: 200, desc: "Goteras de temporada. Gastas $200." },
+    34: { id: 34, name: "Venta de Activos", type: "opportunity", icon: "💎", next: 35, cost: 300, moneyBonus: 700, desc: "¿Liquidar un activo por $300 para recibir $700 netos?" },
+    35: { id: 35, name: "Donación a Comunidad", type: "lifestyle", icon: "❤️", next: 36, cost: 100, hapBonus: 25, desc: "¿Donar $100 a una causa local (+25 Felicidad)?" },
+    36: { id: 36, name: "Último Cobro", type: "payday", icon: "🏦", next: 37, desc: "Cobro final de liquidación." },
+    37: { id: 37, name: "JUBILACIÓN & RETIRO", type: "finish", icon: "🏖️", next: null, desc: "¡Llegaste a la meta! Espera el cálculo de tu puntuación final." }
+};
+
+const visualBoardLayout = Array.from({ length: 38 }, (_, i) => i);
+
+// ==========================================
+// 3. ESTADO Y JUGADORES
+// ==========================================
+let currentPlayerIndex = 0;
+let isBusy = false;
+
+let players = [
+    { id: 1, name: "Jugador 1", color: "#f43f5e", avatar: "🏎️", position: 0, money: 800, happiness: 50, intelligence: 40, debt: 0, finished: false },
+    { id: 2, name: "Jugador 2", color: "#38bdf8", avatar: "🚙", position: 0, money: 800, happiness: 50, intelligence: 40, debt: 0, finished: false },
+    { id: 3, name: "Jugador 3", color: "#10b981", avatar: "🚘", position: 0, money: 800, happiness: 50, intelligence: 40, debt: 0, finished: false },
+    { id: 4, name: "Jugador 4", color: "#fbbf24", avatar: "🛺", position: 0, money: 800, happiness: 50, intelligence: 40, debt: 0, finished: false }
+];
+
+// ==========================================
+// 4. INICIALIZACIÓN
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    initVisualBoard();
+});
+
+function initVisualBoard() {
+    const boardEl = document.getElementById("board");
+    boardEl.innerHTML = "";
+
+    visualBoardLayout.forEach((nodeId) => {
+        const node = boardNodes[nodeId];
+        const tileDiv = document.createElement("div");
+        tileDiv.className = `tile tile-${node.type}`;
+        tileDiv.id = `tile-node-${nodeId}`;
+        
+        tileDiv.innerHTML = `
+            <div class="tile-number">Nodal ${nodeId}</div>
+            <div class="tile-icon">${node.icon}</div>
+            <div class="tile-title">${node.name}</div>
+            <div class="tokens-container" id="tokens-node-${nodeId}"></div>
+        `;
+        boardEl.appendChild(tileDiv);
+    });
+}
+
+function startTurnOrderRoll() {
+    document.getElementById("start-modal").classList.add("hidden");
+    
+    // Algoritmo de mezcla aleatoria (Fisher-Yates)
+    for (let i = players.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [players[i], players[j]] = [players[j], players[i]];
+    }
+
+    const orderListEl = document.getElementById("order-list");
+    orderListEl.innerHTML = "";
+
+    players.forEach((p, index) => {
+        const item = document.createElement("div");
+        item.className = "leaderboard-item";
+        item.innerHTML = `
+            <span>Turno ${index + 1}: ${p.avatar} ${p.name}</span>
+            <span style="color:${p.color}">● Activo</span>
+        `;
+        orderListEl.appendChild(item);
+    });
+
+    document.getElementById("order-modal").classList.remove("hidden");
+}
+
+function closeOrderModal() {
+    document.getElementById("order-modal").classList.add("hidden");
+    currentPlayerIndex = 0;
+    renderTokens();
+    updateUI();
+}
+
+function renderTokens() {
+    visualBoardLayout.forEach(nodeId => {
+        const container = document.getElementById(`tokens-node-${nodeId}`);
+        if (container) container.innerHTML = "";
+    });
+
+    players.forEach(p => {
+        const container = document.getElementById(`tokens-node-${p.position}`);
+        if (container) {
+            const token = document.createElement("span");
+            token.className = "board-token";
+            token.style.backgroundColor = p.color;
+            token.innerText = p.avatar;
+            token.title = p.name;
+            container.appendChild(token);
+        }
+    });
+}
+
+function updateUI() {
+    const list = document.getElementById("players-list");
+    list.innerHTML = "";
+
+    players.forEach((p, idx) => {
+        const card = document.createElement("div");
+        card.className = `player-card ${idx === currentPlayerIndex ? 'active' : ''}`;
+        card.innerHTML = `
+            <div class="player-header">
+                <div class="player-avatar" style="background:${p.color}">${p.avatar}</div>
+                <div class="player-name">${p.name} ${p.finished ? '🏁' : ''}</div>
+            </div>
+            <div class="stat-row"><span>💵 Dinero:</span><span class="stat-val">$${Math.round(p.money)}</span></div>
+            <div class="stat-row"><span>😊 Felicidad:</span><span class="stat-val">${Math.round(p.happiness)}/100</span></div>
+            <div class="stat-row"><span>⭐ Inteligencia:</span><span class="stat-val">${Math.round(p.intelligence)}/100</span></div>
+            ${p.debt > 0 ? `<div class="stat-row" style="color:var(--neon-red);font-weight:bold;"><span>⚠️ Deuda:</span><span>$${Math.round(p.debt)}</span></div>` : ''}
+        `;
+        list.appendChild(card);
+    });
+
+    const activePlayer = players[currentPlayerIndex];
+    if (activePlayer) {
+        document.getElementById("current-player-name").innerText = `${activePlayer.name} (${activePlayer.avatar})`;
+        document.getElementById("current-player-name").style.color = activePlayer.color;
+    }
+}
+
+// ==========================================
+// 5. FLUJO DE JUEGO & DADO (CORREGIDO)
+// ==========================================
+function playTurn() {
+    if (isBusy) return;
+
+    let player = players[currentPlayerIndex];
+    if (player.finished) {
+        nextTurn();
+        return;
+    }
+
+    isBusy = true;
+    document.getElementById("btn-spin").disabled = true;
+
+    const diceBox = document.getElementById("dice-visual");
+    diceBox.classList.add("spinning");
+    playSound('dice');
+
+    setTimeout(() => {
+        diceBox.classList.remove("spinning");
+        const steps = Math.floor(Math.random() * 3) + 1; // Genera 1, 2 o 3
+        document.getElementById("dice-value").innerText = steps;
+
+        stepByStepMove(player, steps);
+    }, 400);
+}
+
+function stepByStepMove(player, stepsRemaining) {
+    const currentNode = boardNodes[player.position];
+
+    // Detener movimiento si es bifurcación (que no sea el inicio), llegó a la meta o consumió sus pasos
+    if ((currentNode.type === "fork" && player.position !== 0) || player.position === 37 || stepsRemaining <= 0) {
+        renderTokens();
+        executeTileEvent(player, player.position);
+        return;
+    }
+
+    if (currentNode.next !== null && currentNode.next !== undefined) {
+        player.position = currentNode.next;
+        if (player.position === 37) player.finished = true;
+        
+        renderTokens();
+        playSound('dice');
+
+        setTimeout(() => {
+            stepByStepMove(player, stepsRemaining - 1);
+        }, 280);
+    } else {
+        renderTokens();
+        executeTileEvent(player, player.position);
+    }
+}
+
+// ==========================================
+// 6. EVENTOS Y DIÁLOGOS
+// ==========================================
+function executeTileEvent(player, nodeId) {
+    const node = boardNodes[nodeId];
+
+    if (node.type === "payday") {
+        playSound('money');
+        const salary = 400 + (player.intelligence * 6);
+        player.money += salary;
+
+        let debtMsg = "";
+        if (player.debt > 0) {
+            const pay = Math.min(player.debt, 120);
+            player.money -= pay;
+            player.debt -= pay;
+            debtMsg = ` Se abogó $${pay} a tu deuda.`;
+        }
+
+        showAlert("Día de Pago", `Cobraste $${Math.round(salary)} de salario.${debtMsg}`, () => finishTurn());
+    }
+    else if (node.type === "emergency") {
+        playSound('emergency');
+        if (player.money >= node.cost) {
+            player.money -= node.cost;
+            showAlert(node.name, `${node.desc}\n\nPagaste $${node.cost} en efectivo.`, () => finishTurn());
+        } else {
+            const missing = node.cost - player.money;
+            player.money = 0;
+            player.debt += missing * 1.15;
+            showAlert(node.name, `${node.desc}\n\nSin dinero suficiente. Crédito generado por $${Math.round(missing * 1.15)}.`, () => finishTurn());
+        }
+    }
+    else if (node.type === "fork") {
+        showForkModal(player, node);
+    }
+    else if (node.type === "opportunity" || node.type === "lifestyle") {
+        showDecisionModal(player, node);
+    }
+    else if (node.type === "finish") {
+        playSound('victory');
+        player.finished = true;
+        showAlert("¡Llegaste a la Jubilación!", "Has completado tu recorrido vital.", () => finishTurn());
+    }
+}
+
+function showAlert(title, text, callback) {
+    const modal = document.getElementById("event-modal");
+    document.getElementById("modal-badge").innerText = "NOTIFICACIÓN";
+    document.getElementById("modal-title").innerText = title;
+    document.getElementById("modal-description").innerText = text;
+
+    const choicesDiv = document.getElementById("modal-choices");
+    choicesDiv.innerHTML = "";
+
+    const btn = document.createElement("button");
+    btn.className = "btn-roll full-width";
+    btn.innerText = "Continuar";
+    btn.onclick = () => {
+        modal.classList.add("hidden");
+        if (callback) callback();
+    };
+
+    choicesDiv.appendChild(btn);
+    modal.classList.remove("hidden");
+}
+
+function showDecisionModal(player, node) {
+    const modal = document.getElementById("event-modal");
+    document.getElementById("modal-badge").innerText = node.type === "opportunity" ? "OPORTUNIDAD" : "ESTILO DE VIDA";
+    document.getElementById("modal-title").innerText = node.name;
+    document.getElementById("modal-description").innerText = node.desc;
+
+    const choicesDiv = document.getElementById("modal-choices");
+    choicesDiv.innerHTML = "";
+
+    const btnAccept = document.createElement("button");
+    btnAccept.className = "btn-choice";
+    btnAccept.innerHTML = `<span>Aceptar</span> <span>-$${node.cost || 0}</span>`;
+    btnAccept.onclick = () => {
+        if (player.money >= (node.cost || 0)) {
+            player.money -= (node.cost || 0);
+            if (node.intBonus) player.intelligence = Math.min(100, player.intelligence + node.intBonus);
+            if (node.hapBonus) player.happiness = Math.min(100, Math.max(0, player.happiness + node.hapBonus));
+            if (node.moneyBonus) player.money += node.moneyBonus;
+            playSound('money');
+        } else {
+            alert("No tienes suficiente dinero para esta opción.");
+            return;
+        }
+        modal.classList.add("hidden");
+        finishTurn();
+    };
+
+    const btnDecline = document.createElement("button");
+    btnDecline.className = "btn-choice";
+    btnDecline.style.opacity = "0.7";
+    btnDecline.innerHTML = `<span>Pasar</span> <span>$0</span>`;
+    btnDecline.onclick = () => {
+        modal.classList.add("hidden");
+        finishTurn();
+    };
+
+    choicesDiv.appendChild(btnAccept);
+    choicesDiv.appendChild(btnDecline);
+    modal.classList.remove("hidden");
+}
+
+function showForkModal(player, node) {
+    const modal = document.getElementById("event-modal");
+    document.getElementById("modal-badge").innerText = "DECISIÓN BIFURCADA";
+    document.getElementById("modal-title").innerText = node.name;
+    document.getElementById("modal-description").innerText = node.desc;
+
+    const choicesDiv = document.getElementById("modal-choices");
+    choicesDiv.innerHTML = "";
+
+    node.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "btn-choice";
+        btn.innerHTML = `<span>${choice.text}</span>`;
+        btn.onclick = () => {
+            if (choice.cost && player.money < choice.cost) {
+                alert("No tienes suficiente dinero para esta opción.");
+                return;
+            }
+            if (choice.cost) player.money -= choice.cost;
+            if (choice.debt) player.debt += choice.debt;
+            if (choice.int) player.intelligence += choice.int;
+            if (choice.hap) player.happiness += choice.hap;
+            if (choice.money) player.money += choice.money;
+
+            player.position = choice.next;
+            renderTokens();
+            modal.classList.add("hidden");
+            finishTurn();
+        };
+        choicesDiv.appendChild(btn);
+    });
+
+    modal.classList.remove("hidden");
+}
+
+// ==========================================
+// 7. CONTROL DE TURNOS Y FIN DE JUEGO
+// ==========================================
+function finishTurn() {
+    isBusy = false;
+    updateUI();
+    document.getElementById("btn-spin").disabled = false;
+
+    if (players.every(p => p.finished)) {
+        triggerVictory();
+        return;
+    }
+
+    nextTurn();
+}
+
+function nextTurn() {
+    let attempts = 0;
+    do {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        attempts++;
+    } while (players[currentPlayerIndex].finished && attempts <= players.length);
+
+    updateUI();
+}
+
+function triggerVictory() {
+    playSound('victory');
+    if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+    }
+
+    const results = players.map(p => {
+        const score = (p.money / 1000) + (p.happiness * 1.5) + (p.intelligence * 1.2) - (p.debt * 2);
+        return { ...p, score };
+    }).sort((a, b) => b.score - a.score);
+
+    const leaderboardEl = document.getElementById("victory-leaderboard");
+    leaderboardEl.innerHTML = "";
+
+    results.forEach((p, idx) => {
+        const item = document.createElement("div");
+        item.className = `leaderboard-item ${idx === 0 ? 'first' : ''}`;
+        item.innerHTML = `
+            <span>${idx + 1}. ${p.avatar} ${p.name}</span>
+            <span>${p.score.toFixed(1)} Puntos</span>
+        `;
+        leaderboardEl.appendChild(item);
+    });
+
+    document.getElementById("victory-modal").classList.remove("hidden");
+}
+</script>
+</body>
+</html>
