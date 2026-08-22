@@ -5,7 +5,7 @@
 <h1 align="center">🎮 Mi Portafolio de Game Development</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Juegos-6-00f5ff?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Juegos-5-00f5ff?style=for-the-badge">
   <img src="https://img.shields.io/badge/Tecnología-HTML5%20%7C%20CSS3%20%7C%20JavaScript-ff00a8?style=for-the-badge">
 </p>
 
@@ -89,17 +89,7 @@ Arcade de concientización ambiental ambientado en La Paz: cierra las fugas de a
 🔗 [Ver proyecto](./games/cierra-el-grifo-la-paz) &nbsp;|&nbsp; ▶️ <a href="https://TheStevenTL.github.io/MiPortafolioGameDevelopment/games/cierra-el-grifo-la-paz/" target="_blank" rel="noopener">Jugar</a>
 
 </td>
-<td width="50%" valign="top">
-
-### 💰 [FinanLife: Dark Edition](./games/finanlife-dark-edition)
-<img src="games/finanlife-dark-edition/banner.svg" width="100%">
-
-Tablero de vida financiera para 4 jugadores: de la universidad a la jubilación, gestionando dinero, felicidad, inteligencia y deuda.
-
-**Género:** Board Game / Party / Educativo &nbsp;|&nbsp; **Motor:** HTML5 + JS
-🔗 [Ver proyecto](./games/finanlife-dark-edition) &nbsp;|&nbsp; ▶️ <a href="https://TheStevenTL.github.io/MiPortafolioGameDevelopment/games/finanlife-dark-edition/" target="_blank" rel="noopener">Jugar</a>
-
-</td>
+<td width="50%" valign="top"></td>
 </tr>
 </table>
 
@@ -142,11 +132,7 @@ MiPortafolioGameDevelopment/
     │   ├── index.html
     │   ├── README.md
     │   └── banner.svg
-    ├── cierra-el-grifo-la-paz/
-    │   ├── index.html
-    │   ├── README.md
-    │   └── banner.svg
-    └── finanlife-dark-edition/
+    └── cierra-el-grifo-la-paz/
         ├── index.html
         ├── README.md
         └── banner.svg

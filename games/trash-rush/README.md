@@ -39,7 +39,7 @@
 
 | Guía inicial | Gameplay | Resultado final |
 |---|---|---|
-| ![inicio](../../assets/placeholder.svg) | ![gameplay](../../assets/placeholder.svg) | ![resultado](../../assets/placeholder.svg) |
+| ![inicio](../../assets/screenshots/trash-rush-inicio.png) | ![gameplay](../../assets/screenshots/trash-rush-gameplay.png) | ![resultado](../../assets/screenshots/trash-rush-victoria.png) |
 
 ## ▶️ Jugar
 

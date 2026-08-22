@@ -36,7 +36,7 @@
 
 | Pantalla inicial | Gameplay | Jefe / Boss fight |
 |---|---|---|
-| ![inicio](../../assets/placeholder.svg) | ![gameplay](../../assets/placeholder.svg) | ![boss](../../assets/placeholder.svg) |
+| ![inicio](../../assets/screenshots/cosmic-strike-inicio.png) | ![gameplay](../../assets/screenshots/cosmic-strike-gameplay.png) | ![boss](../../assets/screenshots/cosmic-strike-boss.png) |
 
 ## ▶️ Jugar
 

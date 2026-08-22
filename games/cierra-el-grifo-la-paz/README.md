@@ -36,7 +36,7 @@
 
 | Reglas iniciales | Gameplay | Resultados |
 |---|---|---|
-| ![inicio](../../assets/placeholder.svg) | ![gameplay](../../assets/placeholder.svg) | ![resultados](../../assets/placeholder.svg) |
+| ![inicio](../../assets/screenshots/grifo-inicio.png) | ![gameplay](../../assets/screenshots/grifo-gameplay.png) | ![resultados](../../assets/screenshots/grifo-final.png) |
 
 ## ▶️ Jugar
 

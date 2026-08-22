@@ -36,7 +36,7 @@
 
 | Bienvenida | Nodo de decisión | Final |
 |---|---|---|
-| ![inicio](../../assets/placeholder.svg) | ![decision](../../assets/placeholder.svg) | ![final](../../assets/placeholder.svg) |
+| ![inicio](../../assets/screenshots/echoes-inicio.png) | ![decision](../../assets/screenshots/echoes-decision.png) | ![final](../../assets/screenshots/echoes-final.png) |
 
 ## ▶️ Jugar
 
