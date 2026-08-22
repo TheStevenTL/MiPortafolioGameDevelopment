@@ -36,7 +36,7 @@
 
 | Pantalla inicial | Gameplay | Game Over |
 |---|---|---|
-| ![inicio](../../assets/placeholder.svg) | ![gameplay](../../assets/placeholder.svg) | ![gameover](../../assets/placeholder.svg) |
+| ![inicio](../../assets/screenshots/masth-crush-inicio.png) | ![gameplay](../../assets/placeholder.svg) | ![gameover](../../assets/placeholder.svg) |
 
 ## ▶️ Jugar
 
